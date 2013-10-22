@@ -118,10 +118,25 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	}
 
 	private void updateFrequency() {
-		Log.e("DEBUG", "updateFrequency()");
 		try {
 			int mode = 0;
-			File f = new File("/sys/devices/virtual/thermal/thermal_zone0/temp");
+			File f = new File("/sys/devices/platform/omap/omap_temp_sensor.0/temperature");
+			if(!f.exists()) {
+				f = new File("/sys/kernel/debug/tegra_thermal/temp_tj");
+				mode = 0;
+			}
+			if(!f.exists()) {
+				f = new File("/sys/devices/system/cpu/cpu0/cpufreq/cpu_temp");
+				mode = 0;
+			}
+			if(!f.exists()) {
+				f = new File("/sys/class/thermal/thermal_zone0/temp");
+				mode = 0;
+			}
+			if(!f.exists()) {
+				f = new File("/sys/class/thermal/thermal_zone1/temp");
+				mode = 0;
+			}
 			if(!f.exists()) {
 				f = new File("/sys/devices/platform/s5p-tmu/curr_temp");
 				mode = 1;
