@@ -25,6 +25,8 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	final private Context mContext;
 	final public static String PREF_KEY = "cputemp_preferences";
 	private PendingIntent pi = null;
+	private File freqFile = null;
+	private int freqMode = 0;
 
 	public CpuTemp(Context context) {
 		this(context, null);
@@ -38,6 +40,9 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		super(context, attrs, defStyle);
 		mContext = context;
 		
+		// init
+		initFreqFile();
+
 		// style
 		setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 		setTextColor(context.getResources().getColor(
@@ -51,6 +56,43 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		setAlarm(updateInterval);
 	}
 	
+	private void initFreqFile() {
+		freqFile = new File("/sys/devices/platform/omap/omap_temp_sensor.0/temperature");
+		if(!freqFile.exists()) {
+			freqFile = new File("/sys/kernel/debug/tegra_thermal/temp_tj");
+			freqMode = 0;
+		}
+		else return;
+
+		if(!freqFile.exists()) {
+			freqFile = new File("/sys/devices/system/cpu/cpu0/cpufreq/cpu_temp");
+			freqMode = 0;
+		}
+		else return;
+
+		if(!freqFile.exists()) {
+			freqFile = new File("/sys/class/thermal/thermal_zone0/temp");
+			freqMode = 0;
+		}
+		else return;
+
+		if(!freqFile.exists()) {
+			freqFile = new File("/sys/class/thermal/thermal_zone1/temp");
+			freqMode = 0;
+		}
+		else return;
+
+		if(!freqFile.exists()) {
+			freqFile = new File("/sys/devices/platform/s5p-tmu/curr_temp");
+			freqMode = 1;
+		}
+		else return;
+
+		if(!freqFile.exists()) {
+			freqFile = null;
+		}
+	}
+
 	@Override
 	protected void onAttachedToWindow() {
 		super.onAttachedToWindow();
@@ -119,30 +161,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 
 	private void updateFrequency() {
 		try {
-			int mode = 0;
-			File f = new File("/sys/devices/platform/omap/omap_temp_sensor.0/temperature");
-			if(!f.exists()) {
-				f = new File("/sys/kernel/debug/tegra_thermal/temp_tj");
-				mode = 0;
-			}
-			if(!f.exists()) {
-				f = new File("/sys/devices/system/cpu/cpu0/cpufreq/cpu_temp");
-				mode = 0;
-			}
-			if(!f.exists()) {
-				f = new File("/sys/class/thermal/thermal_zone0/temp");
-				mode = 0;
-			}
-			if(!f.exists()) {
-				f = new File("/sys/class/thermal/thermal_zone1/temp");
-				mode = 0;
-			}
-			if(!f.exists()) {
-				f = new File("/sys/devices/platform/s5p-tmu/curr_temp");
-				mode = 1;
-			}
-			
-			FileInputStream fis = new FileInputStream(f);
+			FileInputStream fis = new FileInputStream(freqFile);
 			StringBuffer sFreq = new StringBuffer("");
 
 			byte[] buffer = new byte[1024];
@@ -153,17 +172,18 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 
 			String text = "";
 			int freq = Integer.parseInt(sFreq.toString().replaceAll("[^0-9]+", ""));
-			if(mode == 0) {
+			if(freqMode == 0) {
 				text=String.valueOf(freq);
 			}
-			else if(mode==1) {
+			else if(freqMode==1) {
 				text = String.valueOf(freq/10f);
 			}
-			
+
 			setText(text + "°C");
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			setText("-");
 		}
 	}
 
