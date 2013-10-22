@@ -16,6 +16,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,6 +28,8 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	private PendingIntent pi = null;
 	private File freqFile = null;
 	private int freqMode = 0;
+	public LinearLayout containerLayoutLeft = null;
+	public LinearLayout containerLayoutRight = null;
 
 	public CpuTemp(Context context) {
 		this(context, null);
@@ -192,14 +195,25 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		if(key.equals("position")) {
 			int position = pref.getInt("position", 0);
 			if(position==0) {
-				LinearLayout mSystemIconArea = (LinearLayout)getParent();
-				mSystemIconArea.removeView(this);
-				mSystemIconArea.addView(this, 0);
+				containerLayoutRight.removeView(this);
+				containerLayoutLeft.removeView(this);
+
+				containerLayoutRight.addView(this, 0);
+				containerLayoutLeft.setVisibility(View.GONE);
 			}
 			else if(position==1) {
-				LinearLayout mSystemIconArea = (LinearLayout)getParent();
-				mSystemIconArea.removeView(this);
-				mSystemIconArea.addView(this);
+				containerLayoutRight.removeView(this);
+				containerLayoutLeft.removeView(this);
+
+				containerLayoutRight.addView(this);
+				containerLayoutLeft.setVisibility(View.GONE);
+			}
+			else if(position==2) {
+				containerLayoutRight.removeView(this);
+				containerLayoutLeft.removeView(this);
+
+				containerLayoutLeft.addView(this);
+				containerLayoutLeft.setVisibility(View.VISIBLE);
 			}
 		}
 		
