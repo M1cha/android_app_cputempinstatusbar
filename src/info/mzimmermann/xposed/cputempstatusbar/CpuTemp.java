@@ -53,10 +53,6 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		setSingleLine(true);
 		setPadding(6, 0, 0, 0);
 		setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-		
-		// start update interval
-		int updateInterval = mContext.getSharedPreferences(PREF_KEY, 0).getInt("update_interval", 1000);
-		setAlarm(updateInterval);
 	}
 	
 	private void initFreqFile() {
@@ -106,12 +102,17 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		filter.addAction(Intent.ACTION_SCREEN_ON);
 		mContext.registerReceiver(mBroadcastReceiver, filter);
 		mContext.getSharedPreferences(PREF_KEY, 0).registerOnSharedPreferenceChangeListener(this);
+
+		// start update interval
+		int updateInterval = mContext.getSharedPreferences(PREF_KEY, 0).getInt("update_interval", 1000);
+		setAlarm(updateInterval);
 	}
 	
 	@Override
 	protected void onDetachedFromWindow() {
 		mContext.unregisterReceiver(mBroadcastReceiver);
 		mContext.getSharedPreferences(PREF_KEY, 0).unregisterOnSharedPreferenceChangeListener(this);
+		cancelAlarm();
 		super.onDetachedFromWindow();
 	}
 
