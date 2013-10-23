@@ -88,6 +88,18 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		else return;
 
 		if(!freqFile.exists()) {
+			freqFile = new File("/sys/devices/virtual/thermal/thermal_zone0/temp");
+			freqMode = 1;
+		}
+		else return;
+
+		if(!freqFile.exists()) {
+			freqFile = new File("/sys/devices/virtual/thermal/thermal_zone1/temp");
+			freqMode = 1;
+		}
+		else return;
+
+		if(!freqFile.exists()) {
 			freqFile = null;
 		}
 	}
