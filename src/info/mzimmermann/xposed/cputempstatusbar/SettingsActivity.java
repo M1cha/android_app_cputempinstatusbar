@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -70,6 +71,14 @@ public class SettingsActivity extends PreferenceActivity {
 
 		bindPreferenceSummaryToValue(findPreference("update_interval"));
 		bindPreferenceSummaryToValue(findPreference("position"));
+		findPreference("debug_menu").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				startActivity(new Intent(getApplicationContext(), DebugActivity.class));
+				return false;
+			}
+		});
 	}
 
 	/** {@inheritDoc} */

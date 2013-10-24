@@ -45,6 +45,8 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		
 		// init
 		initFreqFile();
+		Utils.log("freqFile="+freqFile.getPath());
+		Utils.log("freqMode="+freqMode);
 
 		// style
 		setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
@@ -199,6 +201,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			Utils.log(Log.getStackTraceString(e));
 			setText("-");
 		}
 	}
@@ -231,7 +234,6 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		}
 		
 		else if(key.equals("update_interval")) {
-			Log.e("DEBUG", "new update_interval");
 			int updateInterval = pref.getInt("update_interval", 1000);
 			cancelAlarm();
 			setAlarm(updateInterval);

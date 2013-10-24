@@ -4,6 +4,7 @@
     <string name="pref_default_update_interval">1000</string>
     <string name="pref_default_position">0</string>
     <string name="pref_title_position">Position</string>
+    <string name="pref_title_debug_menu">Debug</string>
     <string name="pref_title_update_interval">Update Interval</string>
 
     <string-array name="pref_position_list_titles">
