@@ -80,6 +80,7 @@ public class SettingsActivity extends PreferenceActivity {
 		temperature_file.setEntries(files);
 		temperature_file.setEntryValues(files);
 		bindPreferenceSummaryToValue(findPreference("temperature_file"));
+		bindPreferenceSummaryToValue(findPreference("measurement"));
 	}
 
 	/** {@inheritDoc} */
@@ -147,6 +148,14 @@ public class SettingsActivity extends PreferenceActivity {
 				if (mContext != null) {
 					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
 					i.putExtra("temperature_divider", updateInterval);
+					mContext.sendBroadcast(i);
+				}
+			}
+			if (preference.getKey().equals("measurement")) {
+				String measurement = stringValue;
+				if (mContext != null) {
+					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
+					i.putExtra("measurement", measurement);
 					mContext.sendBroadcast(i);
 				}
 			}

@@ -111,7 +111,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 				isScreenOn = false;
 			}
 			else if(intent.getAction().equals(INTENT_ACTION_UPDATE) && isScreenOn) {
-				updateTempuency();
+				updateTemperature();
 			}
 			else if(intent.getAction().equals(SettingsActivity.ACTION_SETTINGS_UPDATE)) {
 				if(mContext!=null) {
@@ -128,6 +128,9 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 					}
 					if(intent.hasExtra("temperature_divider")) {
 						editor.putInt("temperature_divider", intent.getIntExtra("temperature_divider", 1));
+					}
+					if(intent.hasExtra("measurement")) {
+						editor.putString("measurement", intent.getStringExtra("measurement"));
 					}
 					editor.commit();
 				}
@@ -152,25 +155,35 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		}
 	}
 
-	private void updateTempuency() {
+	private void updateTemperature() {
 		try {
 			FileInputStream fis = new FileInputStream(tempFile);
 			StringBuffer sbTemp = new StringBuffer("");
 
+			// read temperature
 			byte[] buffer = new byte[1024];
 			while (fis.read(buffer) != -1) {
 				sbTemp.append(new String(buffer));
 			}
 			fis.close();
 
+			// parse temp
 			String sTemp = sbTemp.toString().replaceAll("[^0-9]+", "");
 			float temp = Float.valueOf(sTemp);
+
+			// measure system
+			String measurement = mContext.getSharedPreferences(PREF_KEY, 0).getString("measurement", "C");
+			if(measurement.equals("F")){
+				temp = (temp * 9/5) + 32;
+			}
+			
+			// apply divider
 			int divider = mContext.getSharedPreferences(PREF_KEY, 0).getInt("temperature_divider", 1);
 			if(divider!=0)
 				temp = temp/divider;
-
-			setText((int)temp + "°C");
-
+			
+			// set text
+			setText((int)temp + "°"+measurement);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Utils.log(Log.getStackTraceString(e));
@@ -214,12 +227,6 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		else if(key.equals("temperature_file")) {
 			String temperature_file = pref.getString("temperature_file", null);
 			tempFile = Utils.getTempFile(mContext, temperature_file);
-		}
-		
-		else if(key.equals("temperature_divider")) {
-			int updateInterval = pref.getInt("temperature_divider", 1);
-			cancelAlarm();
-			setAlarm(updateInterval);
 		}
 	}
 }
