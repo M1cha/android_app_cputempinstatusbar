@@ -70,6 +70,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 		bindPreferenceSummaryToValue(findPreference("update_interval"));
 		bindPreferenceSummaryToValue(findPreference("position"));
+		bindPreferenceSummaryToValue(findPreference("measurement"));
 	}
 
 	/** {@inheritDoc} */
@@ -113,6 +114,14 @@ public class SettingsActivity extends PreferenceActivity {
 				if (mContext != null) {
 					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
 					i.putExtra("position", position);
+					mContext.sendBroadcast(i);
+				}
+			}
+			if (preference.getKey().equals("update_interval")) {
+				int updateInterval = Integer.parseInt(stringValue);
+				if (mContext != null) {
+					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
+					i.putExtra("update_interval", updateInterval);
 					mContext.sendBroadcast(i);
 				}
 			}
