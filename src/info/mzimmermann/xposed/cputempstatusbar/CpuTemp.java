@@ -189,7 +189,11 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			String text = "";
 			int freq = Integer.parseInt(sFreq.toString().replaceAll("[^0-9]+", ""));
 			if(freqMode == 0) {
-				text=String.valueOf(freq);
+				if(freq > 1000){ //Minor bugfix for the Galaxy Nexus Phone (maguro)
+					text=String.valueOf(freq/1000f);	
+				} else {
+					text=String.valueOf(freq);				
+				}
 			}
 			else if(freqMode==1) {
 				text = String.valueOf(freq/10f);
