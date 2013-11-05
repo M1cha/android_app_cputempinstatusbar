@@ -3,8 +3,11 @@
     <string name="title_activity_settings">CpuTemp in Statusbar</string>
     <string name="pref_default_update_interval">1000</string>
     <string name="pref_default_position">0</string>
+    <string name="pref_default_measurement">C</string>
+    
     <string name="pref_title_position">Position</string>
     <string name="pref_title_update_interval">Update Interval</string>
+    <string name="pref_title_measurement">Display as</string>
 
     <string-array name="pref_position_list_titles">
         <item>Absolute-Left</item>
@@ -15,6 +18,15 @@
         <item>2</item>
         <item>0</item>
         <item>1</item>
+    </string-array>
+    
+    <string-array name="pref_temp_measurement_list_titles">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+    </string-array>
+    <string-array name="pref_temp_measurement_list_values">
+        <item>C</item>
+        <item>F</item>
     </string-array>
 
 </resources>

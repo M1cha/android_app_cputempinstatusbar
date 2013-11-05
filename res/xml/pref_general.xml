@@ -25,5 +25,14 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_position" />
+    
+    <ListPreference
+        android:defaultValue="@string/pref_default_measurement"
+        android:entries="@array/pref_temp_measurement_list_titles"
+        android:entryValues="@array/pref_temp_measurement_list_values"
+        android:key="measurement"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_measurement" />
 
 </PreferenceScreen>

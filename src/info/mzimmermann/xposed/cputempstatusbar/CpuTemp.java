@@ -28,6 +28,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	private PendingIntent pi = null;
 	private File freqFile = null;
 	private int freqMode = 0;
+	private boolean celsius;
 	public LinearLayout containerLayoutLeft = null;
 	public LinearLayout containerLayoutRight = null;
 
@@ -117,6 +118,10 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 
 		// start update interval
 		int updateInterval = mContext.getSharedPreferences(PREF_KEY, 0).getInt("update_interval", 1000);
+		String measurement = mContext.getSharedPreferences(PREF_KEY, 0).getString("measurement", "C");
+		if(measurement.equals("F")){
+			celsius = false;
+		}
 		setAlarm(updateInterval);
 	}
 	
@@ -188,14 +193,24 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 
 			String text = "";
 			int freq = Integer.parseInt(sFreq.toString().replaceAll("[^0-9]+", ""));
+			
+			if(!celsius){ ///Convert to Fahrenheit
+				freq = (freq * 9/5) + 32;
+			}
 			if(freqMode == 0) {
 				text=String.valueOf(freq);
 			}
 			else if(freqMode==1) {
 				text = String.valueOf(freq/10f);
 			}
+			
+			if(!celsius){ 
+				setText(text + "°F");
+			} else {
+				setText(text + "°C");
+			}
 
-			setText(text + "°C");
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
