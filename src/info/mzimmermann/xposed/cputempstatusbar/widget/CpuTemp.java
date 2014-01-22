@@ -31,7 +31,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	final private Context mContext;
 	final public static String PREF_KEY = "cputemp_preferences";
 	private PendingIntent pi = null;
-	private File freqFile = null;
+	private File tempFile = null;
 	public LinearLayout containerLayoutLeft = null;
 	public LinearLayout containerLayoutRight = null;
 
@@ -48,9 +48,9 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		mContext = context;
 		
 		// init
-		initFreqFile();
+		initTempFile();
 		try {
-			Utils.log("freqFile="+freqFile==null?"null":freqFile.getPath());
+			Utils.log("tempFile="+tempFile==null?"null":tempFile.getPath());
 		} catch (Exception e) {
 			Utils.log(Log.getStackTraceString(e));
 		}
@@ -64,9 +64,9 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 	}
 	
-	private void initFreqFile() {
+	private void initTempFile() {
 		String temperature_file = mContext.getSharedPreferences(PREF_KEY, 0).getString("temperature_file", null);
-		freqFile = Utils.getFreqFile(mContext, temperature_file);
+		tempFile = Utils.getTempFile(mContext, temperature_file);
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 				isScreenOn = false;
 			}
 			else if(intent.getAction().equals(INTENT_ACTION_UPDATE) && isScreenOn) {
-				updateFrequency();
+				updateTempuency();
 			}
 			else if(intent.getAction().equals(SettingsActivity.ACTION_SETTINGS_UPDATE)) {
 				if(mContext!=null) {
@@ -152,24 +152,24 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		}
 	}
 
-	private void updateFrequency() {
+	private void updateTempuency() {
 		try {
-			FileInputStream fis = new FileInputStream(freqFile);
-			StringBuffer sbFreq = new StringBuffer("");
+			FileInputStream fis = new FileInputStream(tempFile);
+			StringBuffer sbTemp = new StringBuffer("");
 
 			byte[] buffer = new byte[1024];
 			while (fis.read(buffer) != -1) {
-				sbFreq.append(new String(buffer));
+				sbTemp.append(new String(buffer));
 			}
 			fis.close();
 
-			String sFreq = sbFreq.toString().replaceAll("[^0-9]+", "");
-			float freq = Float.valueOf(sFreq);
+			String sTemp = sbTemp.toString().replaceAll("[^0-9]+", "");
+			float temp = Float.valueOf(sTemp);
 			int divider = mContext.getSharedPreferences(PREF_KEY, 0).getInt("temperature_divider", 1);
 			if(divider!=0)
-				freq = freq/divider;
+				temp = temp/divider;
 
-			setText((int)freq + "°C");
+			setText((int)temp + "°C");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -213,7 +213,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		
 		else if(key.equals("temperature_file")) {
 			String temperature_file = pref.getString("temperature_file", null);
-			freqFile = Utils.getFreqFile(mContext, temperature_file);
+			tempFile = Utils.getTempFile(mContext, temperature_file);
 		}
 		
 		else if(key.equals("temperature_divider")) {

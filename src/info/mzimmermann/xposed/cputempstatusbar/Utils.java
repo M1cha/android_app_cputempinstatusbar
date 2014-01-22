@@ -48,7 +48,7 @@ public class Utils {
 		return result.toArray(new String[]{});
 	}
 	
-	private static String[] freqFiles = {
+	private static String[] tempFiles = {
 		"/sys/devices/platform/omap/omap_temp_sensor.0/temperature",
 		"/sys/kernel/debug/tegra_thermal/temp_tj",
 		"/sys/devices/system/cpu/cpu0/cpufreq/cpu_temp",
@@ -60,7 +60,7 @@ public class Utils {
 		"/sys/devices/system/cpu/cpufreq/cput_attributes/cur_temp",
 	};
 	
-	public static File getFreqFile(Context context, String fileName) {
+	public static File getTempFile(Context context, String fileName) {
 		File ret = null;
 		
 		if(fileName!=null) { 
@@ -70,8 +70,8 @@ public class Utils {
 		}
 		
 		if(ret==null || fileName.equals("AUTO")) {
-			for(String freqFileName : freqFiles) {
-				ret = new File(freqFileName);
+			for(String tempFileName : tempFiles) {
+				ret = new File(tempFileName);
 				if(!ret.exists() || !ret.canRead()) {
 					ret = null;
 					continue;
@@ -81,7 +81,7 @@ public class Utils {
 		}
 		
 		if(ret==null) {
-			Utils.log("Couldn't find any freq files!");
+			Utils.log("Couldn't find any temp files!");
 		}
 		
 		return ret;

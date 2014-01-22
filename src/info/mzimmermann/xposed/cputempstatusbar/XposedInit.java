@@ -46,7 +46,7 @@ public class XposedInit implements IXposedHookLoadPackage {
 						LinearLayout mStatusBarContents = (LinearLayout)XposedHelpers.getObjectField(param.thisObject, "mStatusBarContents");
 						Context mContext = (Context)XposedHelpers.getObjectField(param.thisObject, "mContext");
 						int position = mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0).getInt("position", 0);
-						CpuTemp cpuFreq = new CpuTemp(mContext);
+						CpuTemp cpuTemp = new CpuTemp(mContext);
 
 						LinearLayout container = new LinearLayout(mContext);
 						container.setOrientation(LinearLayout.HORIZONTAL);
@@ -55,17 +55,17 @@ public class XposedInit implements IXposedHookLoadPackage {
 						container.setVisibility(View.GONE);
 						mStatusBarContents.addView(container, 0);
 
-						cpuFreq.containerLayoutLeft = container;
-						cpuFreq.containerLayoutRight = mSystemIconArea;
+						cpuTemp.containerLayoutLeft = container;
+						cpuTemp.containerLayoutRight = mSystemIconArea;
 
 						if(position==0) {
-							mSystemIconArea.addView(cpuFreq, 0);
+							mSystemIconArea.addView(cpuTemp, 0);
 						}
 						else if(position==1) {
-							mSystemIconArea.addView(cpuFreq);
+							mSystemIconArea.addView(cpuTemp);
 						}
 						else if(position==2) {
-							container.addView(cpuFreq);
+							container.addView(cpuTemp);
 							container.setVisibility(View.VISIBLE);
 						}
 					}
