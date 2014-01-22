@@ -1,5 +1,7 @@
-package info.mzimmermann.xposed.cputempstatusbar;
+package info.mzimmermann.xposed.cputempstatusbar.activities;
 
+import info.mzimmermann.xposed.cputempstatusbar.R;
+import info.mzimmermann.xposed.cputempstatusbar.Utils;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -69,16 +70,16 @@ public class SettingsActivity extends PreferenceActivity {
 		// Add 'general' preferences.
 		addPreferencesFromResource(R.xml.pref_general);
 
+		
 		bindPreferenceSummaryToValue(findPreference("update_interval"));
 		bindPreferenceSummaryToValue(findPreference("position"));
-		findPreference("debug_menu").setOnPreferenceClickListener(new OnPreferenceClickListener() {
-
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				startActivity(new Intent(getApplicationContext(), DebugActivity.class));
-				return false;
-			}
-		});
+		
+		ListPreference temperature_file = (ListPreference)findPreference("temperature_file");
+		bindPreferenceSummaryToValue(findPreference("temperature_divider"));
+		String[] files = Utils.getTemperatureFiles();
+		temperature_file.setEntries(files);
+		temperature_file.setEntryValues(files);
+		bindPreferenceSummaryToValue(findPreference("temperature_file"));
 	}
 
 	/** {@inheritDoc} */
@@ -130,6 +131,22 @@ public class SettingsActivity extends PreferenceActivity {
 				if (mContext != null) {
 					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
 					i.putExtra("update_interval", updateInterval);
+					mContext.sendBroadcast(i);
+				}
+			}
+			if (preference.getKey().equals("temperature_file")) {
+				String temperatureFile = stringValue;
+				if (mContext != null) {
+					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
+					i.putExtra("temperature_file", temperatureFile);
+					mContext.sendBroadcast(i);
+				}
+			}
+			if (preference.getKey().equals("temperature_divider")) {
+				int updateInterval = Integer.parseInt(stringValue);
+				if (mContext != null) {
+					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
+					i.putExtra("temperature_divider", updateInterval);
 					mContext.sendBroadcast(i);
 				}
 			}

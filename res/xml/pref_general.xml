@@ -11,6 +11,21 @@
         android:singleLine="true"
         android:title="@string/pref_title_update_interval" />
 
+    <ListPreference
+        android:key="temperature_file"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_temperature_file" />
+
+    <EditTextPreference
+        android:defaultValue="@string/pref_default_temperature_divider"
+        android:inputType="number"
+        android:key="temperature_divider"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_temperature_divider" />
+
     <!--
          NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it.
@@ -24,9 +39,5 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_position" />
-
-    <Preference
-        android:key="debug_menu"
-        android:title="@string/pref_title_debug_menu" />
 
 </PreferenceScreen>

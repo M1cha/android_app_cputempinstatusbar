@@ -26,17 +26,13 @@
             android:value="@string/app_description" />
 
         <activity
-            android:name="info.mzimmermann.xposed.cputempstatusbar.SettingsActivity"
+            android:name="info.mzimmermann.xposed.cputempstatusbar.activities.SettingsActivity"
             android:label="@string/title_activity_settings" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="info.mzimmermann.xposed.cputempstatusbar.DebugActivity"
-            android:label="@string/title_activity_debug" >
         </activity>
     </application>
 

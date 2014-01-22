@@ -1,8 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-
-    <item android:id="@+id/action_refresh"
-          android:icon="@drawable/navigation_refresh"
-          android:title="@string/action_refresh"
-          android:showAsAction="ifRoom"  />
-
-</menu>
