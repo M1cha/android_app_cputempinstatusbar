@@ -37,6 +37,11 @@ public class Utils {
 
 			String line = null;
 			while ((line = inBuffered.readLine()) != null) {
+				if(line.indexOf("trip_point")>=0)
+					continue;
+				if(line.indexOf("_crit")>=0)
+					continue;
+				
 				result.add(line.trim());
 			}
 		} catch (IOException e) {
