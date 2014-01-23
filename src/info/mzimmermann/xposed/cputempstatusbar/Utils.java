@@ -63,6 +63,7 @@ public class Utils {
 		"/sys/devices/virtual/thermal/thermal_zone0/temp",
 		"/sys/devices/virtual/thermal/thermal_zone1/temp",
 		"/sys/devices/system/cpu/cpufreq/cput_attributes/cur_temp",
+		"/sys/devices/platform/s5p-tmu/temperature",
 	};
 	
 	public static File getTempFile(Context context, String fileName) {
