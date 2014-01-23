@@ -83,12 +83,6 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		// start update interval
 		int updateInterval = mContext.getSharedPreferences(PREF_KEY, 0).getInt("update_interval", 1000);
 		setAlarm(updateInterval);
-		
-		// set text color
-		TextView mClock = XposedInit.getClock();
-		if(mClock!=null) {
-			setTextColor(mClock.getCurrentTextColor());
-		}
 	}
 	
 	@Override
@@ -184,6 +178,12 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			
 			// set text
 			setText((int)temp + "°"+measurement);
+			
+			// set text color
+			TextView mClock = XposedInit.getClock();
+			if(mClock!=null) {
+				setTextColor(mClock.getCurrentTextColor());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			Utils.log(Log.getStackTraceString(e));
