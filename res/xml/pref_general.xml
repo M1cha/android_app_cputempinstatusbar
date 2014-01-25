@@ -39,7 +39,6 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_position" />
-    
     <ListPreference
         android:defaultValue="@string/pref_default_measurement"
         android:entries="@array/pref_temp_measurement_list_titles"
@@ -48,5 +47,18 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_measurement" />
+
+    <CheckBoxPreference
+        android:key="manual_color"
+        android:title="@string/pref_title_enable_manual_color" />
+
+    <net.margaritov.preference.colorpicker.ColorPickerPreference
+        alphaSlider="true"
+        android:defaultValue="@android:color/black"
+        android:dependency="manual_color"
+        android:key="configured_color"
+        android:summary="@string/color1_summary"
+        android:title="@string/pref_title_configured_color" >
+    </net.margaritov.preference.colorpicker.ColorPickerPreference>
 
 </PreferenceScreen>

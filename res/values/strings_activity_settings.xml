@@ -11,6 +11,8 @@
     <string name="pref_title_temperature_file">Temperature File</string>
     <string name="pref_title_temperature_divider">Temperature Divider</string>
     <string name="pref_title_measurement">Display as</string>
+    <string name="pref_title_enable_manual_color">Manual Color</string>
+    <string name="pref_title_configured_color">Text Color</string>
 
     <string-array name="pref_position_list_titles">
         <item>Absolute-Left</item>

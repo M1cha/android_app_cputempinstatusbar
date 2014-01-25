@@ -3,10 +3,8 @@ package info.mzimmermann.xposed.cputempstatusbar.widget;
 import info.mzimmermann.xposed.cputempstatusbar.Utils;
 import info.mzimmermann.xposed.cputempstatusbar.XposedInit;
 import info.mzimmermann.xposed.cputempstatusbar.activities.SettingsActivity;
-
 import java.io.File;
 import java.io.FileInputStream;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -17,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -126,6 +125,12 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 					if(intent.hasExtra("measurement")) {
 						editor.putString("measurement", intent.getStringExtra("measurement"));
 					}
+					if(intent.hasExtra("manual_color")) {
+						editor.putBoolean("manual_color", intent.getBooleanExtra("manual_color", false));
+					}
+					if(intent.hasExtra("configured_color")) {
+						editor.putInt("configured_color", intent.getIntExtra("configured_color", Color.BLACK));
+					}
 					editor.commit();
 				}
 			}
@@ -180,9 +185,14 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			setText((int)temp + "°"+measurement);
 			
 			// set text color
+			boolean manual_color = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("manual_color", false);
+			int configured_color = mContext.getSharedPreferences(PREF_KEY, 0).getInt("configured_color", Color.BLACK);
 			TextView mClock = XposedInit.getClock();
-			if(mClock!=null) {
+			if(!manual_color && mClock!=null) {
 				setTextColor(mClock.getCurrentTextColor());
+			}
+			else {
+				setTextColor(configured_color);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -81,6 +81,8 @@ public class SettingsActivity extends PreferenceActivity {
 		temperature_file.setEntryValues(files);
 		bindPreferenceSummaryToValue(findPreference("temperature_file"));
 		bindPreferenceSummaryToValue(findPreference("measurement"));
+		findPreference("manual_color").setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+		findPreference("configured_color").setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 	}
 
 	/** {@inheritDoc} */
@@ -158,6 +160,26 @@ public class SettingsActivity extends PreferenceActivity {
 					i.putExtra("measurement", measurement);
 					mContext.sendBroadcast(i);
 				}
+			}
+			
+			if (preference.getKey().equals("manual_color")) {
+				boolean manual_color = Boolean.parseBoolean(stringValue);
+				if (mContext != null) {
+					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
+					i.putExtra("manual_color", manual_color);
+					mContext.sendBroadcast(i);
+				}
+				return true;
+			}
+			
+			if (preference.getKey().equals("configured_color")) {
+				int configured_color = Integer.parseInt(stringValue);
+				if (mContext != null) {
+					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
+					i.putExtra("configured_color", configured_color);
+					mContext.sendBroadcast(i);
+				}
+				return true;
 			}
 
 			if (preference instanceof ListPreference) {
