@@ -160,14 +160,36 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			setText((int)temp + "°"+measurement);
 			
 			// set text color
-			boolean manual_color = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("manual_color", false);
-			int configured_color = mContext.getSharedPreferences(PREF_KEY, 0).getInt("configured_color", Color.BLACK);
+			int color_mode = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("color_mode", "0"));
 			TextView mClock = XposedInit.getClock();
-			if(!manual_color && mClock!=null) {
-				setTextColor(mClock.getCurrentTextColor());
-			}
-			else {
+			switch(color_mode) {
+			// auto
+			case 0:
+				if(mClock!=null) {
+					setTextColor(mClock.getCurrentTextColor());
+				}
+				break;
+			//manual
+			case 1:
+				int configured_color = mContext.getSharedPreferences(PREF_KEY, 0).getInt("configured_color", Color.BLACK);
 				setTextColor(configured_color);
+				break;
+			// temp
+			case 2:
+				int color_low = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_low", Color.BLUE);
+				int color_middle = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_middle", Color.GREEN);
+				int color_high = mContext.getSharedPreferences(PREF_KEY, 0).getInt("color_high", Color.RED);
+				int temp_middle = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("temp_middle", "20"));
+				int temp_high = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("temp_high", "50"));
+				
+				if(temp>=temp_high)
+					setTextColor(color_high);
+				if(temp>=temp_middle)
+					setTextColor(color_middle);
+				else
+					setTextColor(color_low);
+				
+				break;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

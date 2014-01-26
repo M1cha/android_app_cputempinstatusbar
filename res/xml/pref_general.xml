@@ -47,18 +47,63 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_measurement" />
+    <ListPreference
+        android:defaultValue="@string/pref_default_position"
+        android:entries="@array/pref_color_mode_list_titles"
+        android:entryValues="@array/pref_color_mode_list_values"
+        android:key="color_mode"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_color_mode" />
 
-    <CheckBoxPreference
-        android:key="manual_color"
-        android:title="@string/pref_title_enable_manual_color" />
-
+    <!-- MANUAL COLOR -->
     <net.margaritov.preference.colorpicker.ColorPickerPreference
         alphaSlider="true"
         android:defaultValue="@android:color/black"
-        android:dependency="manual_color"
         android:key="configured_color"
         android:summary="@string/color1_summary"
         android:title="@string/pref_title_configured_color" >
     </net.margaritov.preference.colorpicker.ColorPickerPreference>
+
+    <!-- COLOR 1-3 -->
+    <net.margaritov.preference.colorpicker.ColorPickerPreference
+        alphaSlider="true"
+        android:defaultValue="@color/blue"
+        android:key="color_low"
+        android:summary="@string/color1_summary"
+        android:title="@string/pref_title_color_low" >
+    </net.margaritov.preference.colorpicker.ColorPickerPreference>
+    <net.margaritov.preference.colorpicker.ColorPickerPreference
+        alphaSlider="true"
+        android:defaultValue="@color/green"
+        android:key="color_middle"
+        android:summary="@string/color1_summary"
+        android:title="@string/pref_title_color_middle" >
+    </net.margaritov.preference.colorpicker.ColorPickerPreference>
+    <net.margaritov.preference.colorpicker.ColorPickerPreference
+        alphaSlider="true"
+        android:defaultValue="@color/red"
+        android:key="color_high"
+        android:summary="@string/color1_summary"
+        android:title="@string/pref_title_color_high" >
+    </net.margaritov.preference.colorpicker.ColorPickerPreference>
+
+    <!-- TRIP POINTS -->
+    <EditTextPreference
+        android:defaultValue="30"
+        android:inputType="number"
+        android:key="temp_middle"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_temp_middle" />
+    <EditTextPreference
+        android:defaultValue="50"
+        android:inputType="number"
+        android:key="temp_high"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_temp_high" />
 
 </PreferenceScreen>

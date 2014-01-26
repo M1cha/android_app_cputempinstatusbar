@@ -1,5 +1,6 @@
 package info.mzimmermann.xposed.cputempstatusbar.activities;
 
+import net.margaritov.preference.colorpicker.ColorPickerPreference;
 import info.mzimmermann.libxposed.LXTools;
 import info.mzimmermann.libxposed.apps.LXMyApp;
 import info.mzimmermann.xposed.cputempstatusbar.R;
@@ -7,6 +8,7 @@ import info.mzimmermann.xposed.cputempstatusbar.Utils;
 import info.mzimmermann.xposed.cputempstatusbar.widget.CpuTemp;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -20,6 +22,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -84,8 +87,15 @@ public class SettingsActivity extends PreferenceActivity {
 		temperature_file.setEntryValues(files);
 		bindPreferenceSummaryToValue(findPreference("temperature_file"));
 		bindPreferenceSummaryToValue(findPreference("measurement"));
-		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("manual_color"));
-		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("configured_color"));
+		bindPreferenceSummaryToValue(findPreference("color_mode"));
+		bindPreferenceSummaryToValue(findPreference("configured_color"));
+		bindPreferenceSummaryToValue(findPreference("color_low"));
+		bindPreferenceSummaryToValue(findPreference("color_middle"));
+		bindPreferenceSummaryToValue(findPreference("color_high"));
+		bindPreferenceSummaryToValue(findPreference("temp_middle"));
+		bindPreferenceSummaryToValue(findPreference("temp_high"));
+//		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("manual_color"));
+//		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("configured_color"));
 	}
 
 	/** {@inheritDoc} */
@@ -123,6 +133,45 @@ public class SettingsActivity extends PreferenceActivity {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
 			String stringValue = value.toString();
+			PreferenceManager pm = preference.getPreferenceManager();
+			SharedPreferences sp = pm.getSharedPreferences();
+			
+			// get color_mode
+			String sColorMode="0";
+			if(preference.getKey().equals("color_mode"))
+				sColorMode = value.toString();
+			else
+				sColorMode = PreferenceManager.getDefaultSharedPreferences(
+						preference.getContext()).getString("color_mode", "0");
+			int color_mode = Integer.parseInt(sColorMode);
+			
+			switch(color_mode) {
+			case 0:
+				pm.findPreference("configured_color").setEnabled(false);
+				pm.findPreference("color_low").setEnabled(false);
+				pm.findPreference("color_middle").setEnabled(false);
+				pm.findPreference("color_high").setEnabled(false);
+				pm.findPreference("temp_middle").setEnabled(false);
+				pm.findPreference("temp_high").setEnabled(false);
+				break;
+			case 1:
+				pm.findPreference("configured_color").setEnabled(true);
+				pm.findPreference("color_low").setEnabled(false);
+				pm.findPreference("color_middle").setEnabled(false);
+				pm.findPreference("color_high").setEnabled(false);
+				pm.findPreference("temp_middle").setEnabled(false);
+				pm.findPreference("temp_high").setEnabled(false);
+				break;
+			case 2:
+				pm.findPreference("configured_color").setEnabled(false);
+				pm.findPreference("color_low").setEnabled(true);
+				pm.findPreference("color_middle").setEnabled(true);
+				pm.findPreference("color_high").setEnabled(true);
+				pm.findPreference("temp_middle").setEnabled(true);
+				pm.findPreference("temp_high").setEnabled(true);
+				break;
+			}
+			
 			if (preference instanceof ListPreference) {
 				// For list preferences, look up the correct display value in
 				// the preference's 'entries' list.
@@ -157,7 +206,7 @@ public class SettingsActivity extends PreferenceActivity {
 					}
 				}
 
-			} else if(!preference.getKey().equals("manual_color") && !preference.getKey().equals("configured_color")) {
+			} else if(!(preference instanceof ColorPickerPreference)) {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
 				preference.setSummary(stringValue);
@@ -184,8 +233,7 @@ public class SettingsActivity extends PreferenceActivity {
 		sBindPreferenceSummaryToValueListener.onPreferenceChange(
 				preference,
 				PreferenceManager.getDefaultSharedPreferences(
-						preference.getContext()).getString(preference.getKey(),
-						""));
+						preference.getContext()).getAll().get(preference.getKey()));
 	}
 
 	/**
