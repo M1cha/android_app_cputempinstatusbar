@@ -8,7 +8,6 @@ import info.mzimmermann.xposed.cputempstatusbar.Utils;
 import info.mzimmermann.xposed.cputempstatusbar.widget.CpuTemp;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -23,7 +22,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
-import android.util.Log;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -132,28 +130,24 @@ public class SettingsActivity extends PreferenceActivity {
 	private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
-			String stringValue = value.toString();
+			String stringValue = value==null?"":value.toString();
 			PreferenceManager pm = preference.getPreferenceManager();
-			SharedPreferences sp = pm.getSharedPreferences();
 			
 			// get color_mode
 			String sColorMode="0";
-			if(preference.getKey().equals("color_mode"))
-				sColorMode = value.toString();
-			else
-				sColorMode = PreferenceManager.getDefaultSharedPreferences(
-						preference.getContext()).getString("color_mode", "0");
-			int color_mode = Integer.parseInt(sColorMode);
+			int color_mode = 0;
+			try {
+				if(preference.getKey().equals("color_mode"))
+					sColorMode = stringValue;
+				else
+					sColorMode = PreferenceManager.getDefaultSharedPreferences(
+							preference.getContext()).getString("color_mode", "0");
+				color_mode = Integer.parseInt(sColorMode);
+			}
+			catch(Exception e){
+			}
 			
 			switch(color_mode) {
-			case 0:
-				pm.findPreference("configured_color").setEnabled(false);
-				pm.findPreference("color_low").setEnabled(false);
-				pm.findPreference("color_middle").setEnabled(false);
-				pm.findPreference("color_high").setEnabled(false);
-				pm.findPreference("temp_middle").setEnabled(false);
-				pm.findPreference("temp_high").setEnabled(false);
-				break;
 			case 1:
 				pm.findPreference("configured_color").setEnabled(true);
 				pm.findPreference("color_low").setEnabled(false);
@@ -169,6 +163,15 @@ public class SettingsActivity extends PreferenceActivity {
 				pm.findPreference("color_high").setEnabled(true);
 				pm.findPreference("temp_middle").setEnabled(true);
 				pm.findPreference("temp_high").setEnabled(true);
+				break;
+			case 0:
+			default:
+				pm.findPreference("configured_color").setEnabled(false);
+				pm.findPreference("color_low").setEnabled(false);
+				pm.findPreference("color_middle").setEnabled(false);
+				pm.findPreference("color_high").setEnabled(false);
+				pm.findPreference("temp_middle").setEnabled(false);
+				pm.findPreference("temp_high").setEnabled(false);
 				break;
 			}
 			
