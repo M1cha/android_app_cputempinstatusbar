@@ -47,7 +47,7 @@ public class XposedInit implements IXposedHookLoadPackage {
 						LinearLayout mStatusBarContents = (LinearLayout)XposedHelpers.getObjectField(param.thisObject, "mStatusBarContents");
 						Context mContext = (Context)XposedHelpers.getObjectField(param.thisObject, "mContext");
 						LXTools.removeInvalidPreferences(Utils.prefs, mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0));
-						int position = mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0).getInt("position", 0);
+						int position = Integer.parseInt(mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0).getString("position", "0"));
 						CpuTemp cpuTemp = new CpuTemp(mContext);
 
 						LinearLayout container = new LinearLayout(mContext);
