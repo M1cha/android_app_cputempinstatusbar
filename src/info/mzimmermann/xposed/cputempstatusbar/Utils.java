@@ -16,12 +16,18 @@ public class Utils {
 
 	static {
 		prefs.put("update_interval", String.class);
-		prefs.put("position", Integer.class);
+		prefs.put("position", String.class);
 		prefs.put("temperature_file", String.class);
-		prefs.put("temperature_divider", Integer.class);
+		prefs.put("temperature_divider", String.class);
 		prefs.put("measurement", String.class);
 		prefs.put("manual_color", Boolean.class);
+		prefs.put("color_mode", String.class);
 		prefs.put("configured_color", Integer.class);
+		prefs.put("color_low", Integer.class);
+		prefs.put("color_middle", Integer.class);
+		prefs.put("color_high", Integer.class);
+		prefs.put("temp_middle", String.class);
+		prefs.put("temp_high", String.class);
 	}
 
 	public static void log(String s) {
