@@ -1,5 +1,6 @@
 package info.mzimmermann.xposed.cputempstatusbar.widget;
 
+import info.mzimmermann.libxposed.LXTarget;
 import info.mzimmermann.xposed.cputempstatusbar.Utils;
 import info.mzimmermann.xposed.cputempstatusbar.XposedInit;
 import info.mzimmermann.xposed.cputempstatusbar.activities.SettingsActivity;
@@ -13,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -80,7 +80,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		mContext.getSharedPreferences(PREF_KEY, 0).registerOnSharedPreferenceChangeListener(this);
 
 		// start update interval
-		int updateInterval = mContext.getSharedPreferences(PREF_KEY, 0).getInt("update_interval", 1000);
+		int updateInterval = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("update_interval", "1000"));
 		setAlarm(updateInterval);
 	}
 	
@@ -107,32 +107,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 				updateTemperature();
 			}
 			else if(intent.getAction().equals(SettingsActivity.ACTION_SETTINGS_UPDATE)) {
-				if(mContext!=null) {
-					SharedPreferences sp = mContext.getSharedPreferences(PREF_KEY, 0);
-					Editor editor = sp.edit();
-					if(intent.hasExtra("update_interval")) {
-						editor.putInt("update_interval", intent.getIntExtra("update_interval", 1000));
-					}
-					if(intent.hasExtra("position")) {
-						editor.putInt("position", intent.getIntExtra("position", 0));
-					}
-					if(intent.hasExtra("temperature_file")) {
-						editor.putString("temperature_file", intent.getStringExtra("temperature_file"));
-					}
-					if(intent.hasExtra("temperature_divider")) {
-						editor.putInt("temperature_divider", intent.getIntExtra("temperature_divider", 1));
-					}
-					if(intent.hasExtra("measurement")) {
-						editor.putString("measurement", intent.getStringExtra("measurement"));
-					}
-					if(intent.hasExtra("manual_color")) {
-						editor.putBoolean("manual_color", intent.getBooleanExtra("manual_color", false));
-					}
-					if(intent.hasExtra("configured_color")) {
-						editor.putInt("configured_color", intent.getIntExtra("configured_color", Color.BLACK));
-					}
-					editor.commit();
-				}
+				LXTarget.receivePreferences(context.getSharedPreferences(PREF_KEY, 0), intent);
 			}
 		}
 	};
@@ -177,7 +152,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			}
 			
 			// apply divider
-			int divider = mContext.getSharedPreferences(PREF_KEY, 0).getInt("temperature_divider", 1);
+			int divider = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("temperature_divider", "1"));
 			if(divider!=0)
 				temp = temp/divider;
 			
@@ -204,7 +179,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
 		if(key.equals("position")) {
-			int position = pref.getInt("position", 0);
+			int position = Integer.parseInt(pref.getString("position", "0"));
 			if(position==0) {
 				containerLayoutRight.removeView(this);
 				containerLayoutLeft.removeView(this);
@@ -229,7 +204,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 		}
 		
 		else if(key.equals("update_interval")) {
-			int updateInterval = pref.getInt("update_interval", 1000);
+			int updateInterval = Integer.parseInt(pref.getString("update_interval", "1000"));
 			cancelAlarm();
 			setAlarm(updateInterval);
 		}
@@ -238,5 +213,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			String temperature_file = pref.getString("temperature_file", null);
 			tempFile = Utils.getTempFile(mContext, temperature_file);
 		}
+
+		updateTemperature();
 	}
 }

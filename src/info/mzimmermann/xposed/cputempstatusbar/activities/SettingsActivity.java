@@ -1,10 +1,12 @@
 package info.mzimmermann.xposed.cputempstatusbar.activities;
 
+import info.mzimmermann.libxposed.LXTools;
+import info.mzimmermann.libxposed.apps.LXMyApp;
 import info.mzimmermann.xposed.cputempstatusbar.R;
 import info.mzimmermann.xposed.cputempstatusbar.Utils;
+import info.mzimmermann.xposed.cputempstatusbar.widget.CpuTemp;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -45,6 +47,7 @@ public class SettingsActivity extends PreferenceActivity {
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
 		mContext = getApplicationContext();
+		LXTools.removeInvalidPreferences(Utils.prefs, mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0));
 	}
 
 	@Override
@@ -81,8 +84,8 @@ public class SettingsActivity extends PreferenceActivity {
 		temperature_file.setEntryValues(files);
 		bindPreferenceSummaryToValue(findPreference("temperature_file"));
 		bindPreferenceSummaryToValue(findPreference("measurement"));
-		findPreference("manual_color").setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-		findPreference("configured_color").setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("manual_color"));
+		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("configured_color"));
 	}
 
 	/** {@inheritDoc} */
@@ -120,68 +123,6 @@ public class SettingsActivity extends PreferenceActivity {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object value) {
 			String stringValue = value.toString();
-
-			if (preference.getKey().equals("position")) {
-				int position = Integer.parseInt(stringValue);
-				if (mContext != null) {
-					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
-					i.putExtra("position", position);
-					mContext.sendBroadcast(i);
-				}
-			}
-			if (preference.getKey().equals("update_interval")) {
-				int updateInterval = Integer.parseInt(stringValue);
-				if (mContext != null) {
-					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
-					i.putExtra("update_interval", updateInterval);
-					mContext.sendBroadcast(i);
-				}
-			}
-			if (preference.getKey().equals("temperature_file")) {
-				String temperatureFile = stringValue;
-				if (mContext != null) {
-					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
-					i.putExtra("temperature_file", temperatureFile);
-					mContext.sendBroadcast(i);
-				}
-			}
-			if (preference.getKey().equals("temperature_divider")) {
-				int updateInterval = Integer.parseInt(stringValue);
-				if (mContext != null) {
-					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
-					i.putExtra("temperature_divider", updateInterval);
-					mContext.sendBroadcast(i);
-				}
-			}
-			if (preference.getKey().equals("measurement")) {
-				String measurement = stringValue;
-				if (mContext != null) {
-					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
-					i.putExtra("measurement", measurement);
-					mContext.sendBroadcast(i);
-				}
-			}
-			
-			if (preference.getKey().equals("manual_color")) {
-				boolean manual_color = Boolean.parseBoolean(stringValue);
-				if (mContext != null) {
-					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
-					i.putExtra("manual_color", manual_color);
-					mContext.sendBroadcast(i);
-				}
-				return true;
-			}
-			
-			if (preference.getKey().equals("configured_color")) {
-				int configured_color = Integer.parseInt(stringValue);
-				if (mContext != null) {
-					Intent i = new Intent(ACTION_SETTINGS_UPDATE);
-					i.putExtra("configured_color", configured_color);
-					mContext.sendBroadcast(i);
-				}
-				return true;
-			}
-
 			if (preference instanceof ListPreference) {
 				// For list preferences, look up the correct display value in
 				// the preference's 'entries' list.
@@ -216,7 +157,7 @@ public class SettingsActivity extends PreferenceActivity {
 					}
 				}
 
-			} else {
+			} else if(!preference.getKey().equals("manual_color") && !preference.getKey().equals("configured_color")) {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
 				preference.setSummary(stringValue);
@@ -236,8 +177,7 @@ public class SettingsActivity extends PreferenceActivity {
 	 */
 	private static void bindPreferenceSummaryToValue(Preference preference) {
 		// Set the listener to watch for value changes.
-		preference
-				.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, preference, sBindPreferenceSummaryToValueListener);
 
 		// Trigger the listener immediately with the preference's
 		// current value.

@@ -1,5 +1,6 @@
 package info.mzimmermann.xposed.cputempstatusbar;
 
+import info.mzimmermann.libxposed.LXTools;
 import info.mzimmermann.xposed.cputempstatusbar.widget.CpuTemp;
 import android.content.Context;
 import android.util.Log;
@@ -45,6 +46,7 @@ public class XposedInit implements IXposedHookLoadPackage {
 						LinearLayout mSystemIconArea = (LinearLayout)XposedHelpers.getObjectField(param.thisObject, "mSystemIconArea");
 						LinearLayout mStatusBarContents = (LinearLayout)XposedHelpers.getObjectField(param.thisObject, "mStatusBarContents");
 						Context mContext = (Context)XposedHelpers.getObjectField(param.thisObject, "mContext");
+						LXTools.removeInvalidPreferences(Utils.prefs, mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0));
 						int position = mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0).getInt("position", 0);
 						CpuTemp cpuTemp = new CpuTemp(mContext);
 

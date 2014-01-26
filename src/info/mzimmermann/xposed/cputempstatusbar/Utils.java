@@ -6,10 +6,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.Context;
 import de.robv.android.xposed.XposedBridge;
 
 public class Utils {
+	public static HashMap<String, Class<?>> prefs = new HashMap<String, Class<?>>();
+
+	static {
+		prefs.put("update_interval", String.class);
+		prefs.put("position", Integer.class);
+		prefs.put("temperature_file", String.class);
+		prefs.put("temperature_divider", Integer.class);
+		prefs.put("measurement", String.class);
+		prefs.put("manual_color", Boolean.class);
+		prefs.put("configured_color", Integer.class);
+	}
+
 	public static void log(String s) {
 		XposedBridge.log(s);
 	}
