@@ -15,6 +15,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -94,8 +95,7 @@ public class SettingsActivity extends PreferenceActivity {
 		bindPreferenceSummaryToValue(findPreference("color_high"));
 		bindPreferenceSummaryToValue(findPreference("temp_middle"));
 		bindPreferenceSummaryToValue(findPreference("temp_high"));
-//		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("manual_color"));
-//		LXMyApp.setTransferOnPreferenceChangeListener(ACTION_SETTINGS_UPDATE, findPreference("configured_color"));
+		bindPreferenceSummaryToValue(findPreference("show_unit"));
 	}
 
 	/** {@inheritDoc} */
@@ -206,7 +206,7 @@ public class SettingsActivity extends PreferenceActivity {
 					}
 				}
 
-			} else if(!(preference instanceof ColorPickerPreference)) {
+			} else if(!(preference instanceof ColorPickerPreference) && !(preference instanceof CheckBoxPreference)) {
 				// For all other preferences, set the summary to the value's
 				// simple string representation.
 				preference.setSummary(stringValue);

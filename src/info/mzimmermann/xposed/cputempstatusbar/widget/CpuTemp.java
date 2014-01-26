@@ -157,7 +157,11 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 				temp = temp/divider;
 			
 			// set text
-			setText((int)temp + "°"+measurement);
+			boolean show_unit = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("show_unit", true);
+			if(show_unit)
+				setText((int)temp + "°"+measurement);
+			else
+				setText((int)temp + "°");
 			
 			// set text color
 			int color_mode = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("color_mode", "0"));

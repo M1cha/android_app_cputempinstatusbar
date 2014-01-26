@@ -47,6 +47,12 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_title_measurement" />
+
+    <CheckBoxPreference
+        android:key="show_unit"
+        android:defaultValue="true"
+        android:title="@string/pref_title_show_unit" />
+
     <ListPreference
         android:defaultValue="@string/pref_default_position"
         android:entries="@array/pref_color_mode_list_titles"

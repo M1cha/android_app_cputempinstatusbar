@@ -17,6 +17,7 @@
     <string name="pref_title_color_high">Color: High</string>
     <string name="pref_title_temp_middle">Temperature: Middle</string>
     <string name="pref_title_temp_high">Temperature: High</string>
+    <string name="pref_title_show_unit">Show Unit</string>
 
     <string-array name="pref_position_list_titles">
         <item>Absolute-Left</item>
