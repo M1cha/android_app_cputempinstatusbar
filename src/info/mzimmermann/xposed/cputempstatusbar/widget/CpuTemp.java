@@ -20,8 +20,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 @SuppressLint("HandlerLeak")
@@ -31,8 +30,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	final public static String PREF_KEY = "cputemp_preferences";
 	private PendingIntent pi = null;
 	private File tempFile = null;
-	public LinearLayout containerLayoutLeft = null;
-	public LinearLayout containerLayoutRight = null;
+	public PositionCallback mPositionCallback = null;
 
 	public CpuTemp(Context context) {
 		this(context, null);
@@ -166,6 +164,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			// set text color
 			int color_mode = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("color_mode", "0"));
 			TextView mClock = XposedInit.getClock();
+			
 			switch(color_mode) {
 			// auto
 			case 0:
@@ -206,26 +205,16 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 	public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
 		if(key.equals("position")) {
 			int position = Integer.parseInt(pref.getString("position", "0"));
+			if(getParent()!=null)
+				((ViewGroup)getParent()).removeView(this);
 			if(position==0) {
-				containerLayoutRight.removeView(this);
-				containerLayoutLeft.removeView(this);
-
-				containerLayoutRight.addView(this, 0);
-				containerLayoutLeft.setVisibility(View.GONE);
+				mPositionCallback.setLeft();
 			}
 			else if(position==1) {
-				containerLayoutRight.removeView(this);
-				containerLayoutLeft.removeView(this);
-
-				containerLayoutRight.addView(this);
-				containerLayoutLeft.setVisibility(View.GONE);
+				mPositionCallback.setRight();
 			}
 			else if(position==2) {
-				containerLayoutRight.removeView(this);
-				containerLayoutLeft.removeView(this);
-
-				containerLayoutLeft.addView(this);
-				containerLayoutLeft.setVisibility(View.VISIBLE);
+				mPositionCallback.setAbsoluteLeft();
 			}
 		}
 		

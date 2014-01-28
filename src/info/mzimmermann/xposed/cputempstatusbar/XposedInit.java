@@ -1,12 +1,13 @@
 package info.mzimmermann.xposed.cputempstatusbar;
 
+import java.util.ArrayList;
 import info.mzimmermann.libxposed.LXTools;
 import info.mzimmermann.xposed.cputempstatusbar.widget.CpuTemp;
+import info.mzimmermann.xposed.cputempstatusbar.widget.LegacyPositionCallbackImpl;
+import info.mzimmermann.xposed.cputempstatusbar.widget.PositionCallback;
+import info.mzimmermann.xposed.cputempstatusbar.widget.PositionCallbackImpl;
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -15,10 +16,20 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class XposedInit implements IXposedHookLoadPackage {
-	private static TextView tvClock;
+	private static ArrayList<TextView> tvClocks = new ArrayList<TextView>();
+	private static PositionCallback mPositionCallback = null;
 	
 	public static TextView getClock() {
-		return tvClock;
+		if(mPositionCallback==null) 
+			return null;
+		
+		for(TextView tvClock : tvClocks) {
+			if(mPositionCallback.getClockParent().findViewById(tvClock.getId())!=null) {
+				return tvClock;
+			}
+		}
+		
+		return null;
 	}
 	
 	public void handleLoadPackage(final LoadPackageParam lpparam)
@@ -31,7 +42,10 @@ public class XposedInit implements IXposedHookLoadPackage {
 			protected void beforeHookedMethod(MethodHookParam param)
 					throws Throwable {
 				super.beforeHookedMethod(param);
-				tvClock = (TextView)param.thisObject;
+				if(tvClocks.indexOf(param.thisObject)==-1) {
+					tvClocks.add((TextView)param.thisObject);
+					XposedBridge.log("new Clock(): "+param.thisObject);
+				}
 			}
 		});
 		
@@ -43,32 +57,41 @@ public class XposedInit implements IXposedHookLoadPackage {
 				protected void afterHookedMethod(MethodHookParam param)
 						throws Throwable {
 					try {
-						LinearLayout mSystemIconArea = (LinearLayout)XposedHelpers.getObjectField(param.thisObject, "mSystemIconArea");
-						LinearLayout mStatusBarContents = (LinearLayout)XposedHelpers.getObjectField(param.thisObject, "mStatusBarContents");
+						// create cputemp view
 						Context mContext = (Context)XposedHelpers.getObjectField(param.thisObject, "mContext");
 						LXTools.removeInvalidPreferences(Utils.prefs, mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0));
-						int position = Integer.parseInt(mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0).getString("position", "0"));
 						CpuTemp cpuTemp = new CpuTemp(mContext);
 
-						LinearLayout container = new LinearLayout(mContext);
-						container.setOrientation(LinearLayout.HORIZONTAL);
-						container.setWeightSum(1);
-						container.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT));
-						container.setVisibility(View.GONE);
-						mStatusBarContents.addView(container, 0);
-
-						cpuTemp.containerLayoutLeft = container;
-						cpuTemp.containerLayoutRight = mSystemIconArea;
-
+						// identify legacy mode
+						boolean legacy = false;
+						try {
+							XposedHelpers.getObjectField(param.thisObject, "mSystemIconArea");
+						}
+						catch(NoSuchFieldError e) {
+							legacy = true;
+						}
+						
+						// create callback
+						if(legacy)
+							cpuTemp.mPositionCallback = new LegacyPositionCallbackImpl();
+						else
+							cpuTemp.mPositionCallback = new PositionCallbackImpl();
+						
+						// initial setup
+						mPositionCallback = cpuTemp.mPositionCallback;
+						cpuTemp.mPositionCallback.setup(param, cpuTemp);
+						
+						// set position
+						LXTools.removeInvalidPreferences(Utils.prefs, mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0));
+						int position = Integer.parseInt(mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0).getString("position", "0"));
 						if(position==0) {
-							mSystemIconArea.addView(cpuTemp, 0);
+							cpuTemp.mPositionCallback.setLeft();
 						}
 						else if(position==1) {
-							mSystemIconArea.addView(cpuTemp);
+							cpuTemp.mPositionCallback.setRight();
 						}
 						else if(position==2) {
-							container.addView(cpuTemp);
-							container.setVisibility(View.VISIBLE);
+							cpuTemp.mPositionCallback.setAbsoluteLeft();
 						}
 					}
 					catch(Exception e) {
