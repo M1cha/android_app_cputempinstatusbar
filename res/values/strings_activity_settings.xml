@@ -1,10 +1,10 @@
 <resources>
 
     <string name="title_activity_settings">CpuTemp in Statusbar</string>
-    <string name="pref_default_update_interval">1000</string>
-    <string name="pref_default_temperature_divider">1</string>
-    <string name="pref_default_position">0</string>
-    <string name="pref_default_measurement">C</string>
+    <string name="pref_default_update_interval" translatable="false">1000</string>
+    <string name="pref_default_temperature_divider" translatable="false">1</string>
+    <string name="pref_default_position" translatable="false">0</string>
+    <string name="pref_default_measurement" translatable="false">C</string>
     <string name="pref_title_position">Position</string>
     <string name="pref_title_update_interval">Update Interval</string>
     <string name="pref_title_temperature_file">Temperature File</string>
@@ -24,7 +24,7 @@
         <item>Left</item>
         <item>Right</item>
     </string-array>
-    <string-array name="pref_position_list_values">
+    <string-array name="pref_position_list_values" translatable="false">
         <item>2</item>
         <item>0</item>
         <item>1</item>
@@ -33,7 +33,7 @@
         <item>Celsius</item>
         <item>Fahrenheit</item>
     </string-array>
-    <string-array name="pref_temp_measurement_list_values">
+    <string-array name="pref_temp_measurement_list_values" translatable="false">
         <item>C</item>
         <item>F</item>
     </string-array>
@@ -42,7 +42,7 @@
         <item>Manual</item>
         <item>Temperature</item>
     </string-array>
-    <string-array name="pref_color_mode_list_values">
+    <string-array name="pref_color_mode_list_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
