@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">CpuTemp in Statusbar</string>
+    <string name="app_description">Affiche votre température CPU dans la barre d\'état</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_refresh">Actualiser</string>
+
+</resources>

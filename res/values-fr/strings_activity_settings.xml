@@ -1,0 +1,33 @@
+<resources>
+
+    <string name="title_activity_settings">CpuTemp in Statusbar</string>
+    <string name="pref_title_position">Position</string>
+    <string name="pref_title_update_interval">Intervalle de mise à jour</string>
+    <string name="pref_title_temperature_file">Fichier température</string>
+    <string name="pref_title_temperature_divider">Diviseur température</string>
+    <string name="pref_title_measurement">Unité de température</string>
+    <string name="pref_title_color_mode">Mode de couleur</string>
+    <string name="pref_title_configured_color">Couleur du texte</string>
+    <string name="pref_title_color_low">Couleur: Faible</string>
+    <string name="pref_title_color_middle">Couleur: Moyen</string>
+    <string name="pref_title_color_high">Couleur: Élevé</string>
+    <string name="pref_title_temp_middle">Température: Moyenne</string>
+    <string name="pref_title_temp_high">Température: Élevée</string>
+    <string name="pref_title_show_unit">Afficher l\'unité</string>
+
+    <string-array name="pref_position_list_titles">
+        <item>Complètement à gauche</item>
+        <item>Gauche</item>
+        <item>Droite</item>
+    </string-array>
+    <string-array name="pref_temp_measurement_list_titles">
+        <item>Celsius</item>
+        <item>Fahrenheit</item>
+    </string-array>
+    <string-array name="pref_color_mode_list_titles">
+        <item>AUTO</item>
+        <item>Manuel</item>
+        <item>Température</item>
+    </string-array>
+
+</resources>
