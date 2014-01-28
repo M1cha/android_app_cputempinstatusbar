@@ -165,6 +165,11 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			int color_mode = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("color_mode", "0"));
 			TextView mClock = XposedInit.getClock();
 			
+			// set alpha. this prevents wrong initial colors
+			if(mClock!=null) {
+				setAlpha(mClock.getAlpha());
+			}
+
 			switch(color_mode) {
 			// auto
 			case 0:

@@ -1,5 +1,6 @@
 package info.mzimmermann.xposed.cputempstatusbar;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import info.mzimmermann.libxposed.LXTools;
 import info.mzimmermann.xposed.cputempstatusbar.widget.CpuTemp;
@@ -18,17 +19,18 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 public class XposedInit implements IXposedHookLoadPackage {
 	private static ArrayList<TextView> tvClocks = new ArrayList<TextView>();
 	private static PositionCallback mPositionCallback = null;
+	private CpuTemp mCpuTemp = null;
 	
 	public static TextView getClock() {
 		if(mPositionCallback==null) 
 			return null;
-		
+
 		for(TextView tvClock : tvClocks) {
 			if(mPositionCallback.getClockParent().findViewById(tvClock.getId())!=null) {
 				return tvClock;
 			}
 		}
-		
+
 		return null;
 	}
 	
@@ -44,11 +46,28 @@ public class XposedInit implements IXposedHookLoadPackage {
 				super.beforeHookedMethod(param);
 				if(tvClocks.indexOf(param.thisObject)==-1) {
 					tvClocks.add((TextView)param.thisObject);
-					XposedBridge.log("new Clock(): "+param.thisObject);
 				}
 			}
 		});
 		
+		// we hook this method to follow alpha changes in kitkat
+		Method setAlpha = XposedHelpers.findMethodBestMatch(XposedHelpers.findClass("com.android.systemui.statusbar.policy.Clock", lpparam.classLoader), "setAlpha", Float.class);
+		XposedBridge.hookMethod(setAlpha, new XC_MethodHook() {
+			@Override
+			protected void beforeHookedMethod(MethodHookParam param)
+					throws Throwable {
+				super.beforeHookedMethod(param);
+
+				TextView mClock = XposedInit.getClock();
+				if(param.thisObject!=mClock)
+					return;
+
+				if(mCpuTemp!=null && mClock!=null) {
+					mCpuTemp.setAlpha(mClock.getAlpha());
+				}
+			}
+		});
+
 		XposedHelpers.findAndHookMethod(
 			"com.android.systemui.statusbar.phone.PhoneStatusBar",
 			lpparam.classLoader, "makeStatusBarView", new XC_MethodHook() {
@@ -60,7 +79,7 @@ public class XposedInit implements IXposedHookLoadPackage {
 						// create cputemp view
 						Context mContext = (Context)XposedHelpers.getObjectField(param.thisObject, "mContext");
 						LXTools.removeInvalidPreferences(Utils.prefs, mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0));
-						CpuTemp cpuTemp = new CpuTemp(mContext);
+						mCpuTemp = new CpuTemp(mContext);
 
 						// identify legacy mode
 						boolean legacy = false;
@@ -73,25 +92,25 @@ public class XposedInit implements IXposedHookLoadPackage {
 						
 						// create callback
 						if(legacy)
-							cpuTemp.mPositionCallback = new LegacyPositionCallbackImpl();
+							mCpuTemp.mPositionCallback = new LegacyPositionCallbackImpl();
 						else
-							cpuTemp.mPositionCallback = new PositionCallbackImpl();
+							mCpuTemp.mPositionCallback = new PositionCallbackImpl();
 						
 						// initial setup
-						mPositionCallback = cpuTemp.mPositionCallback;
-						cpuTemp.mPositionCallback.setup(param, cpuTemp);
+						mPositionCallback = mCpuTemp.mPositionCallback;
+						mCpuTemp.mPositionCallback.setup(param, mCpuTemp);
 						
 						// set position
 						LXTools.removeInvalidPreferences(Utils.prefs, mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0));
 						int position = Integer.parseInt(mContext.getSharedPreferences(CpuTemp.PREF_KEY, 0).getString("position", "0"));
 						if(position==0) {
-							cpuTemp.mPositionCallback.setLeft();
+							mCpuTemp.mPositionCallback.setLeft();
 						}
 						else if(position==1) {
-							cpuTemp.mPositionCallback.setRight();
+							mCpuTemp.mPositionCallback.setRight();
 						}
 						else if(position==2) {
-							cpuTemp.mPositionCallback.setAbsoluteLeft();
+							mCpuTemp.mPositionCallback.setAbsoluteLeft();
 						}
 					}
 					catch(Exception e) {
