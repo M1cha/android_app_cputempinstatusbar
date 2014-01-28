@@ -192,7 +192,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 				
 				if(temp>=temp_high)
 					setTextColor(color_high);
-				if(temp>=temp_middle)
+				else if(temp>=temp_middle)
 					setTextColor(color_middle);
 				else
 					setTextColor(color_low);
