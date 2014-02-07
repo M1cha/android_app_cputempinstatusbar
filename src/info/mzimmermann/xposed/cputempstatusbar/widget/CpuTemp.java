@@ -143,16 +143,16 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			String sTemp = sbTemp.toString().replaceAll("[^0-9.]+", "");
 			float temp = Float.valueOf(sTemp);
 
+			// apply divider
+			int divider = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("temperature_divider", "1"));
+			if(divider!=0)
+				temp = temp/divider;
+			
 			// measure system
 			String measurement = mContext.getSharedPreferences(PREF_KEY, 0).getString("measurement", "C");
 			if(measurement.equals("F")){
 				temp = (temp * 9/5) + 32;
 			}
-			
-			// apply divider
-			int divider = Integer.parseInt(mContext.getSharedPreferences(PREF_KEY, 0).getString("temperature_divider", "1"));
-			if(divider!=0)
-				temp = temp/divider;
 			
 			// set text
 			boolean show_unit = mContext.getSharedPreferences(PREF_KEY, 0).getBoolean("show_unit", true);
