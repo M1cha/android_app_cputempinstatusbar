@@ -140,7 +140,7 @@ public class CpuTemp extends TextView implements OnSharedPreferenceChangeListene
 			fis.close();
 
 			// parse temp
-			String sTemp = sbTemp.toString().replaceAll("[^0-9]+", "");
+			String sTemp = sbTemp.toString().replaceAll("[^0-9.]+", "");
 			float temp = Float.valueOf(sTemp);
 
 			// measure system
